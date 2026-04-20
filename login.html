@@ -63,22 +63,21 @@
     <button onclick="entrar()">Entrar</button>
     <p id="msg"></p>
   </div>
-  <script>
-    async function entrar() {
-      const login = document.getElementById('login').value;
-      const senha = document.getElementById('senha').value;
-      const res = await fetch('api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ login, senha })
-      });
-      const data = await res.json();
-      if (data.sucesso) {
-        window.location.href = '/index.html';
-      } else {
-        document.getElementById('msg').textContent = 'Login ou senha incorretos!';
-      }
-    }
-  </script>
+<script>
+function entrar() {
+  const login = document.getElementById('login').value;
+  const senha = document.getElementById('senha').value;
+
+  if (login === 'admin' && senha === '123456') {
+    // salva "sessão"
+    localStorage.setItem('logado', 'true');
+
+    // redireciona
+    window.location.href = 'index.html';
+  } else {
+    document.getElementById('msg').textContent = 'Login ou senha incorretos!';
+  }
+}
+</script>
 </body>
 </html>
