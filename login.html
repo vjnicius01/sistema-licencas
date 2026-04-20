@@ -67,7 +67,7 @@
     async function entrar() {
       const login = document.getElementById('login').value;
       const senha = document.getElementById('senha').value;
-      const res = await fetch('/api/login', {
+      const res = await const res = await fetch('https://sistema-licencas-d83u-kbq2q8jhl.vercel.app', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ login, senha })
