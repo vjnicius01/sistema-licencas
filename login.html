@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Sistema de Licenças</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .box {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      width: 320px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+      color: #333;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #4A90E2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    button:hover { background: #357ABD; }
+    #msg {
+      text-align: center;
+      margin-top: 12px;
+      color: red;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Sistema de Licenças</h2>
+    <label>Login</label>
+    <input type="text" id="login" placeholder="Digite seu login">
+    <label>Senha</label>
+    <input type="password" id="senha" placeholder="Digite sua senha">
+    <button onclick="entrar()">Entrar</button>
+    <p id="msg"></p>
+  </div>
+  <script>
+    async function entrar() {
+      const login = document.getElementById('login').value;
+      const senha = document.getElementById('senha').value;
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ login, senha })
+      });
+      const data = await res.json();
+      if (data.sucesso) {
+        window.location.href = '/index.html';
+      } else {
+        document.getElementById('msg').textContent = 'Login ou senha incorretos!';
+      }
+    }
+  </script>
+</body>
+</html>
