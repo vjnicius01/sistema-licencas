@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+module.exports = (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ erro: 'Método não permitido' });
   }
@@ -7,7 +7,7 @@ export default async function handler(req, res) {
 
   if (login === 'admin' && senha === '123456') {
     return res.status(200).json({ sucesso: true });
-  } else {
-    return res.status(401).json({ sucesso: false });
   }
-}
+
+  return res.status(401).json({ sucesso: false });
+};
