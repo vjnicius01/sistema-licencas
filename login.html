@@ -20,21 +20,18 @@
       box-shadow: 0 2px 12px rgba(0,0,0,0.1);
       width: 320px;
     }
-    h2 {
-      text-align: center;
-      margin-bottom: 24px;
-      color: #333;
-    }
+    h2 { text-align: center; margin-bottom: 24px; color: #333; }
+    label { font-size: 13px; color: #555; }
     input {
       width: 100%;
       padding: 10px;
-      margin: 8px 0 16px;
+      margin: 6px 0 16px;
       border: 1px solid #ccc;
       border-radius: 6px;
       box-sizing: border-box;
       font-size: 14px;
     }
-    button {
+    .btn-entrar {
       width: 100%;
       padding: 12px;
       background: #4A90E2;
@@ -43,14 +40,21 @@
       border-radius: 6px;
       font-size: 15px;
       cursor: pointer;
+      margin-bottom: 10px;
     }
-    button:hover { background: #357ABD; }
-    #msg {
-      text-align: center;
-      margin-top: 12px;
-      color: red;
-      font-size: 13px;
+    .btn-entrar:hover { background: #357ABD; }
+    .btn-cadastrar {
+      width: 100%;
+      padding: 12px;
+      background: white;
+      color: #4A90E2;
+      border: 2px solid #4A90E2;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
     }
+    .btn-cadastrar:hover { background: #f0f7ff; }
+    #msg { text-align: center; margin-top: 12px; color: red; font-size: 13px; }
   </style>
 </head>
 <body>
@@ -60,21 +64,26 @@
     <input type="text" id="login" placeholder="Digite seu login">
     <label>Senha</label>
     <input type="password" id="senha" placeholder="Digite sua senha">
-    <button onclick="entrar()">Entrar</button>
+    <button class="btn-entrar" onclick="entrar()">Entrar</button>
+    <button class="btn-cadastrar" onclick="window.location.href='cadastro.html'">Cadastrar Usuário</button>
     <p id="msg"></p>
   </div>
-<script>
-function entrar() {
-  const login = document.getElementById('login').value;
-  const senha = document.getElementById('senha').value;
-
-  if (login === 'admin' && senha === '123456') {
-    localStorage.setItem('logado', 'true');
-    window.location.href = 'index.html';
-  } else {
-    document.getElementById('msg').textContent = 'Login ou senha incorretos!';
-  }
-}
-</script>
+  <script>
+    async function entrar() {
+      const login = document.getElementById('login').value;
+      const senha = document.getElementById('senha').value;
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ login, senha })
+      });
+      const data = await res.json();
+      if (data.sucesso) {
+        window.location.href = '/index.html';
+      } else {
+        document.getElementById('msg').textContent = 'Login ou senha incorretos!';
+      }
+    }
+  </script>
 </body>
 </html>
