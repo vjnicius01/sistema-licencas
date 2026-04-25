@@ -72,31 +72,31 @@
   </div>
   <script>
     async function cadastrar() {
-      const nome = document.getElementById('nome').value;
-      const login = document.getElementById('login').value;
-      const senha = document.getElementById('senha').value;
+  const nome = document.getElementById('nome').value;
+  const login = document.getElementById('login').value;
+  const senha = document.getElementById('senha').value;
 
-      if (!nome || !login || !senha) {
-        document.getElementById('msg').style.color = 'red';
-        document.getElementById('msg').textContent = 'Preencha todos os campos!';
-        return;
-      }
+  if (!nome || !login || !senha) {
+    document.getElementById('msg').style.color = 'red';
+    document.getElementById('msg').textContent = 'Preencha todos os campos!';
+    return;
+  }
+  const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+  const existe = usuarios.find(u => u.login === login);
+  
+  if (existe) {
+    document.getElementById('msg').style.color = 'red';
+    document.getElementById('msg').textContent = 'Login já cadastrado!';
+    return;
+  }
 
-      const res = await fetch('/api/cadastro', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, login, senha })
-      });
-      const data = await res.json();
-      if (data.sucesso) {
-        document.getElementById('msg').style.color = 'green';
-        document.getElementById('msg').textContent = 'Usuário cadastrado com sucesso!';
-        setTimeout(() => window.location.href = 'login.html', 2000);
-      } else {
-        document.getElementById('msg').style.color = 'red';
-        document.getElementById('msg').textContent = data.erro || 'Erro ao cadastrar!';
-      }
-    }
+  usuarios.push({ nome, login, senha });
+  localStorage.setItem('usuarios', JSON.stringify(usuarios));
+  
+  document.getElementById('msg').style.color = 'green';
+  document.getElementById('msg').textContent = 'Usuário cadastrado com sucesso!';
+  setTimeout(() => window.location.href = 'login.html', 2000);
+}
   </script>
 </body>
 </html>
