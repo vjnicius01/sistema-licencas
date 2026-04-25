@@ -69,20 +69,25 @@
     <p id="msg"></p>
   </div>
   <script>
-    async function entrar() {
-      const login = document.getElementById('login').value;
-      const senha = document.getElementById('senha').value;
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ login, senha })
-      });
-      const data = await res.json();
-      if (data.sucesso) {
-        window.location.href = '/index.html';
-      } else {
-        document.getElementById('msg').textContent = 'Login ou senha incorretos!';
-      }
+  async function entrar() {
+  const login = document.getElementById('login').value;
+  const senha = document.getElementById('senha').value;
+    
+  if (login === 'admin' && senha === '123456') {
+    localStorage.setItem('logado', 'true');
+    window.location.href = 'index.html';
+    return;
+  }
+  const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+  const usuario = usuarios.find(u => u.login === login && u.senha === senha);
+
+  if (usuario) {
+    localStorage.setItem('logado', 'true');
+    window.location.href = 'index.html';
+  } else {
+    document.getElementById('msg').textContent = 'Login ou senha incorretos!';
+  }
+}
     }
   </script>
 </body>
