@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Licenças - Sistema</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
+    nav {
+      background: #1a1d2e;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #2d3154;
+    }
+    .nav-logo { font-size: 18px; font-weight: 700; color: #6366f1; }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-links a { color: #94a3b8; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; transition: all 0.2s; }
+    .nav-links a:hover { background: #2d3154; color: #e2e8f0; }
+    .nav-links a.active { background: #6366f1; color: white; }
+    .btn-sair { background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+    .btn-sair:hover { background: #ef4444; color: white; }
+    .container { max-width: 900px; margin: 40px auto; padding: 0 24px; }
+    .page-title { font-size: 22px; font-weight: 700; color: #f1f5f9; margin-bottom: 24px; }
+    .form-card { background: #1a1d2e; border: 1px solid #2d3154; border-radius: 12px; padding: 24px; margin-bottom: 32px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    label { font-size: 13px; color: #94a3b8; display: block; margin-bottom: 6px; }
+    input, select {
+      width: 100%;
+      padding: 10px 14px;
+      background: #0f1117;
+      border: 1px solid #2d3154;
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-size: 14px;
+    }
+    input:focus, select:focus { outline: none; border-color: #6366f1; }
+    .btn { padding: 12px 24px; background: #6366f1; color: white; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; transition: all 0.2s; margin-top: 16px; }
+    .btn:hover { background: #4f46e5; }
+    .section-title { font-size: 16px; font-weight: 600; color: #f1f5f9; margin-bottom: 16px; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #1a1d2e; color: #94a3b8; font-size: 12px; text-transform: uppercase; padding: 12px 16px; text-align: left; border-bottom: 1px solid #2d3154; }
+    td { padding: 14px 16px; border-bottom: 1px solid #1a1d2e; font-size: 14px; }
+    tr:hover td { background: #1a1d2e; }
+    .badge { padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 500; }
+    .badge-ativa { background: #14532d; color: #22c55e; }
+    .badge-vencer { background: #713f12; color: #f59e0b; }
+    .badge-vencida { background: #7f1d1d; color: #ef4444; }
+    .empty { text-align: center; color: #4a5568; padding: 40px; }
+  </style>
+</head>
+<body>
+  <script>if (localStorage.getItem('logado') !== 'true') window.location.href = 'login.html';</script>
+  <nav>
+    <div class="nav-logo">🔐 SisLicenças</div>
+    <div class="nav-links">
+      <a href="index.html">Início</a>
+      <a href="licencas.html" class="active">Licenças</a>
+      <a href="cadastro.html">Cadastrar Usuário</a>
+    </div>
+    <button class="btn-sair" onclick="sair()">Sair</button>
+  </nav>
+
+  <div class="container">
+    <div class="page-title">📋 Gerenciar Licenças</div>
+
+    <div class="form-card">
+      <div class="section-title">Nova Licença</div>
+      <div class="form-grid">
+        <div>
+          <label>Tipo de Licença</label>
+          <input type="text" id="tipo" placeholder="Ex: Licença Ambiental">
+        </div>
+        <div>
+          <label>Órgão Emissor</label>
+          <input type="text" id="orgao" placeholder="Ex: IBAMA">
+        </div>
+        <div>
+          <label>Data de Início</label>
+          <input type="date" id="dataInicio">
+        </div>
+        <div>
+          <label>Data de Vencimento</label>
+          <input type="date" id="dataFim">
+        </div>
+        <div>
+          <label>Status</label>
+          <select id="status">
+            <option value="ativa">Ativa</option>
+            <option value="vencer">A Vencer</option>
+            <option value="vencida">Vencida</option>
+          </select>
+        </div>
+        <div>
+          <label>Custas (R$)</label>
+          <input type="number" id="custas" placeholder="0,00">
+        </div>
+      </div>
+      <button class="btn" onclick="adicionar()">Adicionar Licença</button>
+    </div>
+
+    <div class="section-title">Licenças Cadastradas</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Órgão</th>
+          <th>Vencimento</th>
+          <th>Custas</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="tabela"></tbody>
+    </table>
+    <div class="empty" id="empty">Nenhuma licença cadastrada ainda.</div>
+  </div>
+
+  <script>
+    function sair() { localStorage.removeItem('logado'); window.location.href = 'login.html'; }
+
+    function renderizar() {
+      const licencas = JSON.parse(localStorage.getItem('licencas') || '[]');
+      const tabela = document.getElementById('tabela');
+      const empty = document.getElementById('empty');
+      tabela.innerHTML = '';
+      if (licencas.length === 0) { empty.style.display = 'block'; return; }
+      empty.style.display = 'none';
+      licencas.forEach(l => {
+        const badges = { ativa: 'badge-ativa', vencer: 'badge-vencer', vencida: 'badge-vencida' };
+        const labels = { ativa: 'Ativa', vencer: 'A Vencer', vencida: 'Vencida' };
+        tabela.innerHTML += `
+          <tr>
+            <td>${l.tipo}</td>
+            <td>${l.orgao}</td>
+            <td>${l.dataFim}</td>
+            <td>R$ ${parseFloat(l.custas || 0).toFixed(2)}</td>
+            <td><span class="badge ${badges[l.status]}">${labels[l.status]}</span></td>
+          </tr>`;
+      });
+    }
+
+    function adicionar() {
+      const tipo = document.getElementById('tipo').value;
+      const orgao = document.getElementById('orgao').value;
+      const dataInicio = document.getElementById('dataInicio').value;
+      const dataFim = document.getElementById('dataFim').value;
+      const status = document.getElementById('status').value;
+      const custas = document.getElementById('custas').value;
+      if (!tipo || !orgao || !dataFim) { alert('Preencha pelo menos Tipo, Órgão e Data de Vencimento!'); return; }
+      const licencas = JSON.parse(localStorage.getItem('licencas') || '[]');
+      licencas.push({ tipo, orgao, dataInicio, dataFim, status, custas });
+      localStorage.setItem('licencas', JSON.stringify(licencas));
+      document.getElementById('tipo').value = '';
+      document.getElementById('orgao').value = '';
+      document.getElementById('dataInicio').value = '';
+      document.getElementById('dataFim').value = '';
+      document.getElementById('custas').value = '';
+      renderizar();
+    }
+
+    renderizar();
+  </script>
+</body>
+</html>
