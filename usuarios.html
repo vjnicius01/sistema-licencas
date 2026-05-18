@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuários - Sistema de Licenças</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
+    nav {
+      background: #1a1d2e;
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #2d3154;
+    }
+    .nav-logo { font-size: 18px; font-weight: 700; color: #6366f1; }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-links a { color: #94a3b8; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; transition: all 0.2s; }
+    .nav-links a:hover { background: #2d3154; color: #e2e8f0; }
+    .nav-links a.active { background: #6366f1; color: white; }
+    .btn-sair { background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+    .btn-sair:hover { background: #ef4444; color: white; }
+    .container { max-width: 900px; margin: 40px auto; padding: 0 24px; }
+    .page-title { font-size: 22px; font-weight: 700; color: #f1f5f9; margin-bottom: 24px; }
+    .form-card { background: #1a1d2e; border: 1px solid #2d3154; border-radius: 12px; padding: 24px; margin-bottom: 32px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    label { font-size: 13px; color: #94a3b8; display: block; margin-bottom: 6px; }
+    input {
+      width: 100%;
+      padding: 10px 14px;
+      background: #0f1117;
+      border: 1px solid #2d3154;
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-size: 14px;
+    }
+    input:focus { outline: none; border-color: #6366f1; }
+    .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+    .btn-primary { background: #6366f1; color: white; }
+    .btn-primary:hover { background: #4f46e5; }
+    .btn-warning { background: #f59e0b; color: white; }
+    .btn-warning:hover { background: #d97706; }
+    .btn-danger { background: #ef4444; color: white; }
+    .btn-danger:hover { background: #dc2626; }
+    .btn-row { margin-top: 16px; display: flex; gap: 8px; }
+    .section-title { font-size: 16px; font-weight: 600; color: #f1f5f9; margin-bottom: 16px; }
+    table { width: 100%; border-collapse: collapse; background: #1a1d2e; border-radius: 12px; overflow: hidden; border: 1px solid #2d3154; }
+    th { background: #12152a; color: #94a3b8; font-size: 12px; text-transform: uppercase; padding: 14px 16px; text-align: left; border-bottom: 1px solid #2d3154; }
+    td { padding: 14px 16px; border-bottom: 1px solid #12152a; font-size: 14px; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #12152a; }
+    .actions { display: flex; gap: 8px; }
+    .empty { text-align: center; color: #4a5568; padding: 40px; }
+    .msg { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
+    .msg-success { background: #14532d; color: #22c55e; }
+    .msg-error { background: #7f1d1d; color: #ef4444; }
+    #editModal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    #editModal.show { display: flex; }
+    .modal-box {
+      background: #1a1d2e;
+      border: 1px solid #2d3154;
+      border-radius: 12px;
+      padding: 32px;
+      width: 400px;
+    }
+    .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; color: #f1f5f9; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 20px; justify-content: flex-end; }
+  </style>
+</head>
+<body>
+  <script>if (localStorage.getItem('logado') !== 'true') window.location.href = 'login.html';</script>
+
+  <nav>
+    <div class="nav-logo">🔐 SisLicenças</div>
+    <div class="nav-links">
+      <a href="index.html">Início</a>
+      <a href="licencas.html">Licenças</a>
+      <a href="usuarios.html" class="active">Usuários</a>
+    </div>
+    <button class="btn-sair" onclick="sair()">Sair</button>
+  </nav>
+
+  <div class="container">
+    <div class="page-title">👤 Gerenciar Usuários</div>
+    <div id="msg"></div>
+
+    <div class="form-card">
+      <div class="section-title">Novo Usuário</div>
+      <div class="form-grid">
+        <div>
+          <label>Nome</label>
+          <input type="text" id="nome" placeholder="Nome completo">
+        </div>
+        <div>
+          <label>Login</label>
+          <input type="text" id="login" placeholder="Login de acesso">
+        </div>
+        <div>
+          <label>Senha</label>
+          <input type="password" id="senha" placeholder="Senha">
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="incluir()">+ Incluir Usuário</button>
+      </div>
+    </div>
+
+    <div class="section-title">Usuários Cadastrados</div>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nome</th>
+          <th>Login</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tabela">
+        <tr><td colspan="4" class="empty">Carregando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal de Edição -->
+  <div id="editModal">
+    <div class="modal-box">
+      <div class="modal-title">✏️ Editar Usuário</div>
+      <input type="hidden" id="editId">
+      <div style="margin-bottom:16px">
+        <label>Nome</label>
+        <input type="text" id="editNome" placeholder="Nome completo">
+      </div>
+      <div style="margin-bottom:16px">
+        <label>Login</label>
+        <input type="text" id="editLogin" placeholder="Login">
+      </div>
+      <div style="margin-bottom:16px">
+        <label>Senha</label>
+        <input type="password" id="editSenha" placeholder="Nova senha (deixe em branco para manter)">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-danger" onclick="fecharModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="salvarEdicao()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://dljwtqbnwqvdwgzmqghe.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable__gm1kqJJGmfs7id4MRFEdA_ksL45y_M';
+
+    function sair() { localStorage.removeItem('logado'); window.location.href = 'login.html'; }
+
+    function mostrarMsg(texto, tipo) {
+      const msg = document.getElementById('msg');
+      msg.className = `msg msg-${tipo}`;
+      msg.textContent = texto;
+      setTimeout(() => msg.textContent = '', 3000);
+    }
+
+    async function listar() {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/tbUsuarios?select=*&order=id`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      });
+      const dados = await res.json();
+      const tabela = document.getElementById('tabela');
+      if (!dados.length) {
+        tabela.innerHTML = '<tr><td colspan="4" class="empty">Nenhum usuário cadastrado.</td></tr>';
+        return;
+      }
+      tabela.innerHTML = dados.map(u => `
+        <tr>
+          <td>${u.id}</td>
+          <td>${u.nome}</td>
+          <td>${u.login}</td>
+          <td class="actions">
+            <button class="btn btn-warning" onclick="abrirEdicao(${u.id}, '${u.nome}', '${u.login}')">✏️ Editar</button>
+            <button class="btn btn-danger" onclick="excluir(${u.id})">🗑️ Excluir</button>
+          </td>
+        </tr>`).join('');
+    }
+
+    async function incluir() {
+      const nome = document.getElementById('nome').value.trim();
+      const login = document.getElementById('login').value.trim();
+      const senha = document.getElementById('senha').value.trim();
+      if (!nome || !login || !senha) { mostrarMsg('Preencha todos os campos!', 'error'); return; }
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/tbUsuarios`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ nome, login, senha })
+      });
+      if (res.ok) {
+        mostrarMsg('Usuário incluído com sucesso!', 'success');
+        document.getElementById('nome').value = '';
+        document.getElementById('login').value = '';
+        document.getElementById('senha').value = '';
+        listar();
+      } else {
+        mostrarMsg('Erro ao incluir. Login já existe?', 'error');
+      }
+    }
+
+    function abrirEdicao(id, nome, login) {
+      document.getElementById('editId').value = id;
+      document.getElementById('editNome').value = nome;
+      document.getElementById('editLogin').value = login;
+      document.getElementById('editSenha').value = '';
+      document.getElementById('editModal').classList.add('show');
+    }
+
+    function fecharModal() {
+      document.getElementById('editModal').classList.remove('show');
+    }
+
+    async function salvarEdicao() {
+      const id = document.getElementById('editId').value;
+      const nome = document.getElementById('editNome').value.trim();
+      const login = document.getElementById('editLogin').value.trim();
+      const senha = document.getElementById('editSenha').value.trim();
+      const body = { nome, login };
+      if (senha) body.senha = senha;
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/tbUsuarios?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(body)
+      });
+      if (res.ok) {
+        mostrarMsg('Usuário atualizado!', 'success');
+        fecharModal();
+        listar();
+      } else {
+        mostrarMsg('Erro ao editar!', 'error');
+      }
+    }
+
+    async function excluir(id) {
+      if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/tbUsuarios?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        }
+      });
+      if (res.ok) {
+        mostrarMsg('Usuário excluído!', 'success');
+        listar();
+      } else {
+        mostrarMsg('Erro ao excluir!', 'error');
+      }
+    }
+
+    listar();
+  </script>
+</body>
+</html>
