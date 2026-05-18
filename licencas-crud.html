@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Licenças - Sistema</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
+    nav { background: #1a1d2e; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #2d3154; }
+    .nav-logo { font-size: 18px; font-weight: 700; color: #6366f1; }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-links a { color: #94a3b8; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; transition: all 0.2s; }
+    .nav-links a:hover { background: #2d3154; color: #e2e8f0; }
+    .nav-links a.active { background: #6366f1; color: white; }
+    .btn-sair { background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+    .btn-sair:hover { background: #ef4444; color: white; }
+    .container { max-width: 1000px; margin: 40px auto; padding: 0 24px; }
+    .page-title { font-size: 22px; font-weight: 700; color: #f1f5f9; margin-bottom: 24px; }
+    .form-card { background: #1a1d2e; border: 1px solid #2d3154; border-radius: 12px; padding: 24px; margin-bottom: 32px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    label { font-size: 13px; color: #94a3b8; display: block; margin-bottom: 6px; }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 14px;
+      background: #0f1117;
+      border: 1px solid #2d3154;
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-size: 14px;
+    }
+    input:focus, select:focus { outline: none; border-color: #6366f1; }
+    .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+    .btn-primary { background: #6366f1; color: white; }
+    .btn-primary:hover { background: #4f46e5; }
+    .btn-warning { background: #f59e0b; color: white; }
+    .btn-danger { background: #ef4444; color: white; }
+    .btn-row { margin-top: 16px; }
+    .section-title { font-size: 16px; font-weight: 600; color: #f1f5f9; margin-bottom: 16px; }
+    table { width: 100%; border-collapse: collapse; background: #1a1d2e; border-radius: 12px; overflow: hidden; border: 1px solid #2d3154; }
+    th { background: #12152a; color: #94a3b8; font-size: 12px; text-transform: uppercase; padding: 14px 16px; text-align: left; border-bottom: 1px solid #2d3154; }
+    td { padding: 14px 16px; border-bottom: 1px solid #12152a; font-size: 14px; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #12152a; }
+    .actions { display: flex; gap: 8px; }
+    .empty { text-align: center; color: #4a5568; padding: 40px; }
+    .msg { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
+    .msg-success { background: #14532d; color: #22c55e; }
+    .msg-error { background: #7f1d1d; color: #ef4444; }
+    .badge { padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 500; }
+    .badge-ativa { background: #14532d; color: #22c55e; }
+    .badge-vencer { background: #713f12; color: #f59e0b; }
+    .badge-vencida { background: #7f1d1d; color: #ef4444; }
+    #editModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; }
+    #editModal.show { display: flex; }
+    .modal-box { background: #1a1d2e; border: 1px solid #2d3154; border-radius: 12px; padding: 32px; width: 500px; max-height: 90vh; overflow-y: auto; }
+    .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 20px; color: #f1f5f9; }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 20px; justify-content: flex-end; }
+  </style>
+</head>
+<body>
+  <script>if (localStorage.getItem('logado') !== 'true') window.location.href = 'login.html';</script>
+
+  <nav>
+    <div class="nav-logo">🔐 SisLicenças</div>
+    <div class="nav-links">
+      <a href="index.html">Início</a>
+      <a href="licencas-crud.html" class="active">Licenças</a>
+      <a href="usuarios.html">Usuários</a>
+    </div>
+    <button class="btn-sair" onclick="sair()">Sair</button>
+  </nav>
+
+  <div class="container">
+    <div class="page-title">📋 Gerenciar Licenças</div>
+    <div id="msg"></div>
+
+    <div class="form-card">
+      <div class="section-title">Nova Licença</div>
+      <div class="form-grid">
+        <div>
+          <label>Data de Início</label>
+          <input type="date" id="data_inicio">
+        </div>
+        <div>
+          <label>Data de Vencimento</label>
+          <input type="date" id="data_fim">
+        </div>
+        <div>
+          <label>Custas (R$)</label>
+          <input type="number" id="custas" placeholder="0.00" step="0.01">
+        </div>
+        <div>
+          <label>Tipo de Licença</label>
+          <input type="text" id="licenca_tipo_id" placeholder="Ex: Ambiental">
+        </div>
+        <div>
+          <label>Órgão</label>
+          <input type="text" id="orgao_id" placeholder="Ex: IBAMA">
+        </div>
+        <div>
+          <label>Status</label>
+          <select id="status">
+            <option value="ativa">Ativa</option>
+            <option value="vencer">A Vencer</option>
+            <option value="vencida">Vencida</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <label>Observação</label>
+        <input type="text" id="observacao" placeholder="Observações sobre a licença">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="incluir()">+ Incluir Licença</button>
+      </div>
+    </div>
+
+    <div class="section-title">Licenças Cadastradas</div>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Tipo</th>
+          <th>Órgão</th>
+          <th>Vencimento</th>
+          <th>Custas</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tabela">
+        <tr><td colspan="7" class="empty">Carregando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal de Edição -->
+  <div id="editModal">
+    <div class="modal-box">
+      <div class="modal-title">✏️ Editar Licença</div>
+      <input type="hidden" id="editId">
+      <div class="modal-grid">
+        <div>
+          <label>Data de Início</label>
+          <input type="date" id="editDataInicio">
+        </div>
+        <div>
+          <label>Data de Vencimento</label>
+          <input type="date" id="editDataFim">
+        </div>
+        <div>
+          <label>Custas (R$)</label>
+          <input type="number" id="editCustas" step="0.01">
+        </div>
+        <div>
+          <label>Tipo de Licença</label>
+          <input type="text" id="editTipo">
+        </div>
+        <div>
+          <label>Órgão</label>
+          <input type="text" id="editOrgao">
+        </div>
+        <div>
+          <label>Status</label>
+          <select id="editStatus">
+            <option value="ativa">Ativa</option>
+            <option value="vencer">A Vencer</option>
+            <option value="vencida">Vencida</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label>Observação</label>
+        <input type="text" id="editObservacao">
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-danger" onclick="fecharModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="salvarEdicao()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://dljwtqbnwqvdwgzmqghe.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable__gm1kqJJGmfs7id4MRFEdA_ksL45y_M';
+
+    function sair() { localStorage.removeItem('logado'); window.location.href = 'login.html'; }
+
+    function mostrarMsg(texto, tipo) {
+      const msg = document.getElementById('msg');
+      msg.className = `msg msg-${tipo}`;
+      msg.textContent = texto;
+      setTimeout(() => msg.textContent = '', 3000);
+    }
+
+    async function listar() {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/tblicencas?select=*&order=id`, {
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      });
+      const dados = await res.json();
+      const tabela = document.getElementById('tabela');
+      if (!dados.length) {
+        tabela.innerHTML = '<tr><td colspan="7" class="empty">Nenhuma licença cadastrada.</td></tr>';
+        return;
+      }
+      const badges = { ativa: 'badge-ativa', vencer: 'badge-vencer', vencida: 'badge-vencida' };
+      const labels = { ativa: 'Ativa', vencer: 'A Vencer', vencida: 'Vencida' };
+      tabela.innerHTML = dados.map(l => `
+        <tr>
+          <td>${l.id}</td>
+          <td>${l.licenca_tipo_id || '-'}</td>
+          <td>${l.orgao_id || '-'}</td>
+          <td>${l.data_fim || '-'}</td>
+          <td>R$ ${parseFloat(l.custas || 0).toFixed(2)}</td>
+          <td><span class="badge ${badges[l.status] || 'badge-ativa'}">${labels[l.status] || 'Ativa'}</span></td>
+          <td class="actions">
+            <button class="btn btn-warning" onclick="abrirEdicao(${l.id}, '${l.data_inicio||''}', '${l.data_fim||''}', '${l.custas||0}', '${l.licenca_tipo_id||''}', '${l.orgao_id||''}', '${l.status||'ativa'}', '${l.observacao||''}')">✏️</button>
+            <button class="btn btn-danger" onclick="excluir(${l.id})">🗑️</button>
+          </td>
+        </tr>`).join('');
+    }
+
+    async function incluir() {
+      const body = {
+        data_inicio: document.getElementById('data_inicio').value || null,
+        data_fim: document.getElementById('data_fim').value || null,
+        custas: parseFloat(document.getElementById('custas').value) || null,
+        licenca_tipo_id: document.getElementById('licenca_tipo_id').value || null,
+        orgao_id: document.getElementById('orgao_id').value || null,
+        observacao: document.getElementById('observacao').value || null,
+        status: document.getElementById('status').value
+      };
+      if (!body.data_fim) { mostrarMsg('Preencha a data de vencimento!', 'error'); return; }
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/tblicencas`, {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify(body)
+      });
+      if (res.ok) {
+        mostrarMsg('Licença incluída com sucesso!', 'success');
+        listar();
+      } else {
+        const err = await res.json();
+        mostrarMsg('Erro ao incluir: ' + (err.message || ''), 'error');
+      }
+    }
+
+    function abrirEdicao(id, dataInicio, dataFim, custas, tipo, orgao, status, obs) {
+      document.getElementById('editId').value = id;
+      document.getElementById('editDataInicio').value = dataInicio;
+      document.getElementById('editDataFim').value = dataFim;
+      document.getElementById('editCustas').value = custas;
+      document.getElementById('editTipo').value = tipo;
+      document.getElementById('editOrgao').value = orgao;
+      document.getElementById('editStatus').value = status;
+      document.getElementById('editObservacao').value = obs;
+      document.getElementById('editModal').classList.add('show');
+    }
+
+    function fecharModal() { document.getElementById('editModal').classList.remove('show'); }
+
+    async function salvarEdicao() {
+      const id = document.getElementById('editId').value;
+      const body = {
+        data_inicio: document.getElementById('editDataInicio').value || null,
+        data_fim: document.getElementById('editDataFim').value || null,
+        custas: parseFloat(document.getElementById('editCustas').value) || null,
+        licenca_tipo_id: document.getElementById('editTipo').value || null,
+        orgao_id: document.getElementById('editOrgao').value || null,
+        status: document.getElementById('editStatus').value,
+        observacao: document.getElementById('editObservacao').value || null
+      };
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/tblicencas?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify(body)
+      });
+      if (res.ok) { mostrarMsg('Licença atualizada!', 'success'); fecharModal(); listar(); }
+      else { mostrarMsg('Erro ao editar!', 'error'); }
+    }
+
+    async function excluir(id) {
+      if (!confirm('Excluir esta licença?')) return;
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/tblicencas?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+      });
+      if (res.ok) { mostrarMsg('Licença excluída!', 'success'); listar(); }
+      else { mostrarMsg('Erro ao excluir!', 'error'); }
+    }
+
+    listar();
+  </script>
+</body>
+</html>
